@@ -1,42 +1,53 @@
 import os
-import cv2
 import numpy as np
+import cv2
 from sklearn.model_selection import train_test_split
 
-IMG_SIZE = 128  
-# exterminate that
-CATEGORIES = ['fighter_jet', 'helicopter', 'bomber', 'drone']  
-DATASET_PATH = 'data/kaggle_dataset/'  
+CROP_DIR = '../data/raw/crop/'
+PROCESSED_DIR = '../data/ready/'
 
-def load_and_preprocess_images():
-    data = []
+IMG_SIZE = 128
+
+
+def load_images_and_labels():
+    images = []
     labels = []
+    classes = os.listdir(CROP_DIR)
+    class_mapping = {name: idx for idx, name in enumerate(
+        classes)}
 
-    for category in CATEGORIES:
-        path = os.path.join(DATASET_PATH, category)
-        class_label = CATEGORIES.index(category)
-        
-        for img_name in os.listdir(path):
-            try:
-                img_path = os.path.join(path, img_name)
+    for class_name in classes:
+        class_path = os.path.join(CROP_DIR, class_name)
+        if os.path.isdir(class_path):
+            for img_name in os.listdir(class_path):
+                img_path = os.path.join(class_path, img_name)
                 img = cv2.imread(img_path)
-                img_resized = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
-                data.append(img_resized)
-                labels.append(class_label)
-            except Exception as e:
-                print(f"Error loading image {img_name}: {e}")
+                if img is not None:
+                    img_resized = cv2.resize(
+                        img, (IMG_SIZE, IMG_SIZE))
+                    images.append(img_resized)
+                    labels.append(class_mapping[class_name])
 
-    data = np.array(data) / 255.0  
+    images = np.array(images)
     labels = np.array(labels)
-    return data, labels
+    return images, labels, classes
 
-def split_data(data, labels):
-    return train_test_split(data, labels, test_size=0.2, random_state=42)
 
-if __name__ == "__main__":
-    X, y = load_and_preprocess_images()
-    X_train, X_val, y_train, y_val = split_data(X, y)
-    np.save('data/processed/X_train.npy', X_train)
-    np.save('data/processed/X_val.npy', X_val)
-    np.save('data/processed/y_train.npy', y_train)
-    np.save('data/processed/y_val.npy', y_val)
+def split_and_save_data():
+    images, labels, classes = load_images_and_labels()
+
+    X_train, X_val, y_train, y_val = train_test_split(
+        images, labels, test_size=0.2, random_state=42)
+
+    np.save(os.path.join(PROCESSED_DIR, 'X_train.npy'), X_train)
+    np.save(os.path.join(PROCESSED_DIR, 'X_val.npy'), X_val)
+    np.save(os.path.join(PROCESSED_DIR, 'y_train.npy'), y_train)
+    np.save(os.path.join(PROCESSED_DIR, 'y_val.npy'), y_val)
+
+    with open(os.path.join(PROCESSED_DIR, 'classes.npy'), 'wb') as f:
+        np.save(f, classes)
+
+
+if __name__ == '__main__':
+    split_and_save_data()
+    print("Data has been preprocessed and saved.")

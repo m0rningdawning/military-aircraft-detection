@@ -167,6 +167,7 @@ models/
 *.h5
 datasets/
 runs/
+to-uninstall.txt
 
 # Potentially duplicate (doublecheck)
 venv/

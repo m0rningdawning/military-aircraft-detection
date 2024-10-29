@@ -168,6 +168,7 @@ models/
 datasets/
 runs/
 to-uninstall.txt
+best.pt
 
 # Potentially duplicate (doublecheck)
 venv/

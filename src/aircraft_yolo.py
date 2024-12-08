@@ -4,10 +4,14 @@ import cv2
 model = YOLO('best.pt')
 
 image_paths = [
-    '../data/raw/crop/A10/1a3ffc625ff0b3eb5c3a9349bfb9bc27_1.jpg',
-    '../data/raw/crop/F18/2acc060b1ac622d4cc24680567415f52_0.jpg',
-    '../data/raw/crop/F16/0cd99a9ee135c7618006540f5b6d9b1b_0.jpg',
-    '../data/raw/crop/A400M/3bf06ff19f1aeb86c98a85fd9cb4973f_2.jpg',
+    '../datasets/military/images/aircraft_val/cd7aaef78e9a0efd458aa3b8385f1e23.jpg',
+    '../datasets/military/images/aircraft_val/ffa565e4f573979207ea525e63c204d5.jpg',
+    '../datasets/military/images/aircraft_val/ffa8d739b58bbf6b65e6d5dd9b2e8a69.jpg',
+    '../datasets/military/images/aircraft_val/ff600521dbd019802c3ada1bbe19ad8e.jpg',
+    '../datasets/military/images/aircraft_val/ffff0595d9b782e9cd3c537529bf6027.jpg',
+    '../datasets/other/lol.png',
+    '../datasets/other/apache.png',
+    '../datasets/other/rq4.png',
 ]
 
 screen_width = 1920
@@ -27,7 +31,7 @@ def resize_to_screen(img, screen_width, screen_height):
 current_index = 0
 
 while True:
-    results = model(source=image_paths[current_index], conf=0.25)
+    results = model(source=image_paths[current_index], conf=0.40)
     img = results[0].plot()
 
     resized_img = resize_to_screen(img, screen_width, screen_height)

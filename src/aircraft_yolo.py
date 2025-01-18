@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 import cv2
 
-model = YOLO('best.pt')
+model = YOLO('original.pt')
 
 image_paths = [
     '../datasets/military/images/aircraft_val/cd7aaef78e9a0efd458aa3b8385f1e23.jpg',
